@@ -35,17 +35,17 @@ func (c *urlCache) atomicSet(link *url.URL) bool {
 }
 
 type Crawler struct {
-	instances  []*url.URL
-	numWorkers int
-	cache      *urlCache
+  instances  []*url.URL
+  numWorkers int
+  cache      *urlCache
 }
 
 func NewCrawler(instances []*url.URL, numWorkers int) *Crawler {
-	return &Crawler{
-		instances:  instances,
-		numWorkers: numWorkers,
-		cache:      newUrlCache(),
-	}
+  return &Crawler{
+    instances:  instances,
+    numWorkers: numWorkers,
+    cache:      newUrlCache(),
+  }
 }
 
 func (c *Crawler) crawl(link *url.URL, sig <-chan bool, jobs chan<- int, data chan<- SiteData, errs chan<- error) {
@@ -72,14 +72,14 @@ func (c *Crawler) crawl(link *url.URL, sig <-chan bool, jobs chan<- int, data ch
 }
 
 func (c *Crawler) Start() {
-	sig := make(chan bool, c.numWorkers)
+  sig := make(chan bool, c.numWorkers)
   jobs := make(chan int)
   data := make(chan SiteData)
   errs := make(chan error)
   defer close(sig)
 
   for _, link := range c.instances {
-	  go c.crawl(link, sig, jobs, data, errs)
+    go c.crawl(link, sig, jobs, data, errs)
   }
 
   for i := 0; i < c.numWorkers; i++ {
@@ -90,7 +90,7 @@ func (c *Crawler) Start() {
   for toFetch > 0 {
     select {
     case d := <-data:
-    	// TODO: Extract information
+      // TODO: Extract information
       log.Println(d.Link.String())
 
       toFetch--
