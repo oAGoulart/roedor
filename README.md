@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-informational.svg)](https://opensource.org/licenses/MIT)
 ![Go](https://github.com/oAGoulart/roedor/workflows/Go/badge.svg)
 
-A modular web crawler Go module. The purpose of this module is to crawl through web sites and extract data using the python package [**Markout**](https://github.com/oAGoulart/markout). All extract data is then stored into a CSV file to be analyzed later.
+A modular web crawler Go module. The purpose of this module is to crawl through web sites and extract data using the python package [**Markout**](https://github.com/oAGoulart/markout). All extracted data is then stored into a CSV file to be analyzed later.
 
 ## Usage
 
