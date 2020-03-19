@@ -3,7 +3,10 @@ package crawler
 import (
   "net/url"
   "log"
+  "os"
   "sync"
+
+  ."github.com/oagoulart/roedor/pkg/util"
 )
 
 type SiteData struct {
@@ -36,22 +39,26 @@ func (c *urlCache) atomicSet(link *url.URL) bool {
 
 type Crawler struct {
   instances  []*url.URL
-  numWorkers int
+  numWorkers uint
   cache      *urlCache
+  tokens     Tokens
+  output     string
 }
 
-func NewCrawler(instances []*url.URL, numWorkers int) *Crawler {
+func NewCrawler(instances []*url.URL, numWorkers uint, tokens Tokens, output string) *Crawler {
   return &Crawler{
     instances:  instances,
     numWorkers: numWorkers,
     cache:      newUrlCache(),
+    tokens:     tokens,
+    output:     output,
   }
 }
 
 func (c *Crawler) crawl(link *url.URL, sig <-chan bool, jobs chan<- int, data chan<- SiteData, errs chan<- error) {
   <-sig
-  body, links, err := fetch(link)
 
+  body, links, err := fetch(link)
   if err != nil {
     errs <- err
     return
@@ -78,11 +85,15 @@ func (c *Crawler) Start() {
   errs := make(chan error)
   defer close(sig)
 
+  f, err := os.Create(c.output)
+  PanicErr(err)
+  defer f.Close()
+
   for _, link := range c.instances {
     go c.crawl(link, sig, jobs, data, errs)
   }
 
-  for i := 0; i < c.numWorkers; i++ {
+  for i := 0; uint(i) < c.numWorkers; i++ {
     sig <- true
   }
 
@@ -90,15 +101,30 @@ func (c *Crawler) Start() {
   for toFetch > 0 {
     select {
     case d := <-data:
-      // TODO: Extract information
-      log.Println(d.Link.String())
+      body, err := extract(d.Body, c.tokens)
+      LogErr(err)
+
+      // Create CSV row
+      row := make([]byte, 1)
+      row = []byte("\"")
+      row = append(row, []byte(d.Link.String())...)
+      row = append(row, []byte("\",\"")...)
+      row = append(row, body...)
+      row = append(row, []byte("\"\n")...)
+
+      _, err = f.Write(row)
+      if !LogErr(err) {
+        f.Sync()
+      }
+
+      log.Println(d.Link.String(), string(body))
 
       toFetch--
       sig <- true
     case j := <-jobs:
       toFetch += j
     case e := <-errs:
-      log.Println(e.Error())
+      LogErr(e)
 
       toFetch--
       sig <- true
