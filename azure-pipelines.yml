@@ -32,7 +32,7 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
-- script: go test -v ./...
+- script: go test -v ./pkg/...
   workingDirectory: '$(modulePath)'
   displayName: 'Run tests'
 
