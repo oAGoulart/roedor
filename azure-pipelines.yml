@@ -32,10 +32,6 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
-- script: go test -v ./pkg/...
-  workingDirectory: '$(modulePath)'
-  displayName: 'Run tests'
-
 - script: go build -o ./dist/ -v ./cmd/...
   workingDirectory: '$(modulePath)'
   displayName: 'Build files'
