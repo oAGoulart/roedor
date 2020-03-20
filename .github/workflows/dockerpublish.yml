@@ -15,7 +15,8 @@ on:
 
 env:
   IMAGE_NAME: roedor
-  USER_NAME: oagoulart
+  USER_NAME: oAGoulart
+  REPOSITORY: oagoulart/roedor
 
 jobs:
   # Run tests.
@@ -55,7 +56,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=docker.pkg.github.com/$REPOSITORY/$IMAGE_NAME
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
