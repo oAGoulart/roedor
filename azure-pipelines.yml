@@ -29,10 +29,6 @@ steps:
 - script: |
     go version
     go get -v -t -d ./...
-    if [ -f Gopkg.toml ]; then
-        curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-        dep ensure
-    fi
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
@@ -40,6 +36,6 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Run tests'
 
-- script: go build -v .
+- script: go build -o ./dist/ -v ./cmd/...
   workingDirectory: '$(modulePath)'
   displayName: 'Build files'
