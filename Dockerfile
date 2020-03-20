@@ -3,7 +3,7 @@ WORKDIR /go/src/roedor
 COPY . .
 SHELL ["/bin/bash", "-c"]
 RUN go get -d -v ./...
-RUN go build -o ./dist/ -v ./cmd/...
+RUN go build -o ./dist/roedor -v ./cmd/roedor/
 
 FROM python:3
 WORKDIR /app
