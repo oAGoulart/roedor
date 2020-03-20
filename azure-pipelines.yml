@@ -32,6 +32,6 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
-- script: go build -o ./dist/ -v ./cmd/...
+- script: go build -v ./cmd/...
   workingDirectory: '$(modulePath)'
   displayName: 'Build files'
