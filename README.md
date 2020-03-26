@@ -7,7 +7,7 @@ A modular web crawler Go module. The purpose of this module is to crawl through 
 
 ## Usage
 
-Firstly, make sure you fullfil the requirements below:
+Firstly, make sure you fullfill the requirements below:
 
 **Python** >= 3.5
 **Pip** (*Python module*) >= 18.1
@@ -19,13 +19,13 @@ To install this package, run the `installing` script on `./scripts`:
 ./scripts/installing
 ```
 
-**NOTE:** This package uses an exeternal Python package, if you want to use (*Roedor*) on your code you must also make sure that package (*Markout*) is also installed (the `installing` script should take take of this).
+**NOTE:** This package uses an external Python package, if you want to use (*Roedor*) on your code you must also make sure that package (*Markout*) is also installed (the `installing` script should take care of this).
 
 ### Using the CLI
 
 If you want to use the CLI, all you have to do is to call `markout_html` with the following flags (`$GOBIN`must be set for this command to work):
 
-`--workers`: Number parellel workers at the same time.
+`--workers`: Number of parallel workers at the same time.
 
 `--url`: link to crawl onto.
 
