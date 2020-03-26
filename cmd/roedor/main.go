@@ -33,7 +33,7 @@ func main() {
   } else if siteURL == "" {
   	util.FatalErr(errors.New("you need to specify --url. use --help for usage"))
   } else if tokensJSON == "" {
-  	util.FatalErr(errors.New("you need to specifty --tokens. use --help for usage"))
+  	util.FatalErr(errors.New("you need to specify --tokens. use --help for usage"))
   }
 
   link, err := url.Parse(siteURL)
