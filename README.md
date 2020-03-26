@@ -7,7 +7,7 @@ A modular web crawler Go module. The purpose of this module is to crawl through 
 
 ## Usage
 
-Firstly, make sure you fullfill the requirements below:
+Firstly, make sure you fulfill the requirements below:
 
 **Python** >= 3.5
 **Pip** (*Python module*) >= 18.1
@@ -45,7 +45,7 @@ Here's an example of use:
 ```go
 link, err := url.Parse("https://gobyexample.com/")
 if err != nil {
-  panic("hot potatos")
+  panic("hot potatoes")
 }
 
 tokens := make(Tokens)
