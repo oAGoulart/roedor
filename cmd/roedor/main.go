@@ -7,22 +7,22 @@ import (
   "os"
   "errors"
 
-  ."github.com/oagoulart/roedor/pkg/crawler"
-  ."github.com/oagoulart/roedor/pkg/util"
+  "github.com/oagoulart/roedor/pkg/crawler"
+  "github.com/oagoulart/roedor/pkg/util"
 )
 
 func main() {
 	const (
-		NUMWORKERS = 4
+		maxWorkers = 4
 	)
 
   var numWorkers uint
-  var siteUrl, tokensJson, outputPath string
+  var siteURL, tokensJSON, outputPath string
   var showHelp bool
 
-  flag.UintVar(&numWorkers, "workers", NUMWORKERS, "number of parallel `workers` per link")
-  flag.StringVar(&siteUrl, "url", "", "`link` to crawl into")
-  flag.StringVar(&tokensJson, "tokens", "", "JSON string with `tokens`")
+  flag.UintVar(&numWorkers, "workers", maxWorkers, "number of parallel `workers` at the same time")
+  flag.StringVar(&siteURL, "url", "", "`link` to crawl onto")
+  flag.StringVar(&tokensJSON, "tokens", "", "JSON string with `tokens`")
   flag.StringVar(&outputPath, "output", "./roedor.csv", "`path` to output CSV file")
   flag.BoolVar(&showHelp, "help", false, "show help message")
   flag.Parse()
@@ -30,20 +30,20 @@ func main() {
   if showHelp {
   	flag.PrintDefaults()
   	os.Exit(1)
-  } else if siteUrl == "" {
-  	FatalErr(errors.New("You need to specify --url. Use --help for usage."))
-  } else if tokensJson == "" {
-  	FatalErr(errors.New("You need to specifty --tokens. Use --help for usage."))
+  } else if siteURL == "" {
+  	util.FatalErr(errors.New("you need to specify --url. use --help for usage"))
+  } else if tokensJSON == "" {
+  	util.FatalErr(errors.New("you need to specifty --tokens. use --help for usage"))
   }
 
-  link, err := url.Parse(siteUrl)
-  PanicErr(err)
+  link, err := url.Parse(siteURL)
+  util.PanicErr(err)
 
-  var tokens Tokens
-  err = json.Unmarshal([]byte(tokensJson), &tokens)
-  PanicErr(err)
+  var tokens crawler.Tokens
+  err = json.Unmarshal([]byte(tokensJSON), &tokens)
+  util.PanicErr(err)
 
-  c := NewCrawler(
+  c := crawler.NewCrawler(
     []*url.URL{
       link,
     },

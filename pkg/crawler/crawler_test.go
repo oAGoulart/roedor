@@ -7,6 +7,7 @@ import (
   "github.com/stretchr/testify/assert"
 )
 
+// TestCrawler tests crawling job
 func TestCrawler(t *testing.T) {
   const numWorkers = 4
 
