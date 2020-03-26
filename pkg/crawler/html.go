@@ -12,12 +12,14 @@ import (
 )
 
 const (
-  MARKOUT = "markout_html"
+  markout = "markout_html" // markout's cli
 )
 
+// Tokens is used to convert JSON tokens into a map type
 type Tokens map[string]string
 
-func getHtml(link *url.URL) ([]byte, error) {
+// getHTML uses `link` to make HTTP GET request and return response's body
+func getHTML(link *url.URL) ([]byte, error) {
   resp, err := http.Get(link.String())
   if err != nil {
     return nil, err
@@ -27,14 +29,8 @@ func getHtml(link *url.URL) ([]byte, error) {
   return ioutil.ReadAll(resp.Body)
 }
 
-func getLinks(link *url.URL) ([]*url.URL, error) {
-  link.RawQuery = ""
-
-  body, err := getHtml(link)
-  if err != nil {
-    return nil, err
-  }
-
+// getLinks extracts every link from `body`
+func getLinks(body []byte) ([]*url.URL, error) {
   re := regexp.MustCompile("href=\"(?:(https?:\\/\\/[^\"]*))?\"")
   matches := re.FindAllStringSubmatch(string(body), -1)
   links := make([]*url.URL, len(matches))
@@ -45,27 +41,29 @@ func getLinks(link *url.URL) ([]*url.URL, error) {
       return links, err
     }
 
-    link.RawQuery = ""
+    parsed.RawQuery = ""
     links[i] = parsed
   }
 
   return links, nil
 }
 
+// fetch extracts HTML and links from `link` web page
 func fetch(link *url.URL) ([]byte, []*url.URL, error) {
-  links, err := getLinks(link)
+  body, err := getHTML(link)
   if err != nil {
     return nil, nil, err
   }
 
-  body, err := getHtml(link)
+  links, err := getLinks(body)
   if err != nil {
-    return nil, links, err
+    return body, nil, err
   }
 
   return body, links, nil
 }
 
+// extract uses Markout to extract content from HTML `body` using `tokens`
 func extract(body []byte, tokens Tokens) ([]byte, error) {
   jsonTokens, err := json.Marshal(tokens)
   if err != nil {
@@ -75,7 +73,7 @@ func extract(body []byte, tokens Tokens) ([]byte, error) {
   arg1 := fmt.Sprintf("-e %s", body)
   arg2 := fmt.Sprintf("-t %s", jsonTokens)
   arg3 := fmt.Sprintf("-o %s", "html")
-  cmd := exec.Command(MARKOUT, arg1, arg2, arg3)
+  cmd := exec.Command(markout, arg1, arg2, arg3)
 
   out, err := cmd.CombinedOutput()
   if err != nil {

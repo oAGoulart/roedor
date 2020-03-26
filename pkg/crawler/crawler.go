@@ -6,25 +6,29 @@ import (
   "os"
   "sync"
 
-  ."github.com/oagoulart/roedor/pkg/util"
+  "github.com/oagoulart/roedor/pkg/util"
 )
 
+// SiteData is used to store web site data
 type SiteData struct {
   Link *url.URL
   Body []byte
 }
 
+// urlCache is used to save links visited
 type urlCache struct {
   sync.Mutex
   data map[string]struct{}
 }
 
-func newUrlCache() *urlCache {
+// newURLCache creates new `urlCache` instance
+func newURLCache() *urlCache {
   return &urlCache{
     data: make(map[string]struct{}),
   }
 }
 
+// atomicSet sets `link` as already visited site
 func (c *urlCache) atomicSet(link *url.URL) bool {
   c.Lock()
   _, ok := c.data[link.String()]
@@ -37,6 +41,7 @@ func (c *urlCache) atomicSet(link *url.URL) bool {
   return !ok
 }
 
+// Crawler is used to store crawling configuration
 type Crawler struct {
   instances  []*url.URL
   numWorkers uint
@@ -45,16 +50,18 @@ type Crawler struct {
   output     string
 }
 
+// NewCrawler creates new `Crawler` instance
 func NewCrawler(instances []*url.URL, numWorkers uint, tokens Tokens, output string) *Crawler {
   return &Crawler{
     instances:  instances,
     numWorkers: numWorkers,
-    cache:      newUrlCache(),
+    cache:      newURLCache(),
     tokens:     tokens,
     output:     output,
   }
 }
 
+// crawl is used to create a new crawler routine
 func (c *Crawler) crawl(link *url.URL, sig <-chan bool, jobs chan<- int, data chan<- SiteData, errs chan<- error) {
   <-sig
 
@@ -78,6 +85,7 @@ func (c *Crawler) crawl(link *url.URL, sig <-chan bool, jobs chan<- int, data ch
   }
 }
 
+// Start initializes crawling job
 func (c *Crawler) Start() {
   sig := make(chan bool, c.numWorkers)
   jobs := make(chan int)
@@ -86,7 +94,7 @@ func (c *Crawler) Start() {
   defer close(sig)
 
   f, err := os.Create(c.output)
-  PanicErr(err)
+  util.PanicErr(err)
   defer f.Close()
 
   for _, link := range c.instances {
@@ -102,7 +110,7 @@ func (c *Crawler) Start() {
     select {
     case d := <-data:
       body, err := extract(d.Body, c.tokens)
-      LogErr(err)
+      util.LogErr(err)
 
       // Create CSV row
       row := make([]byte, 1)
@@ -113,7 +121,7 @@ func (c *Crawler) Start() {
       row = append(row, []byte("\"\n")...)
 
       _, err = f.Write(row)
-      if !LogErr(err) {
+      if !util.LogErr(err) {
         f.Sync()
       }
 
@@ -124,7 +132,7 @@ func (c *Crawler) Start() {
     case j := <-jobs:
       toFetch += j
     case e := <-errs:
-      LogErr(e)
+      util.LogErr(e)
 
       toFetch--
       sig <- true
