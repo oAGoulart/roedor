@@ -113,8 +113,7 @@ func (c *Crawler) Start() {
       util.LogErr(err)
 
       // Create CSV row
-      row := make([]byte, 1)
-      row = []byte("\"")
+      row := []byte("\"")
       row = append(row, []byte(d.Link.String())...)
       row = append(row, []byte("\",\"")...)
       row = append(row, body...)
