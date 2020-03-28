@@ -121,7 +121,8 @@ func (c *Crawler) Start() {
       row = append(row, []byte("\"\n")...)
 
       _, err = f.Write(row)
-      if !util.LogErr(err) {
+      ok := !util.LogErr(err)
+      if ok {
         f.Sync()
       }
 
