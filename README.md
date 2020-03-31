@@ -9,9 +9,9 @@ A modular web crawler Go module. The purpose of this module is to crawl through 
 
 Firstly, make sure you fullfil the requirements below:
 
-**Python** >= 3.5
-**Pip** (*Python module*) >= 18.1
-**Go** >= 1.13.6
++ **Python** >= 3.5
++ **Pip** (*Python module*) >= 18.1
++ **Go** >= 1.13.6
 
 To install this package, run the `installing` script on `./scripts`:
 
