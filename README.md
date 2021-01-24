@@ -65,8 +65,6 @@ c := NewCrawler(
 c.Start()
 ```
 
----
-
 ## Contributions
 
 Feel free to leave your contribution here, I would really appreciate it!
